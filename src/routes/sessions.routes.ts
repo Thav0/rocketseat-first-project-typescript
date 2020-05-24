@@ -1,8 +1,8 @@
 import { Router } from 'express';
 
-import CreateSessionService from '../services/CreateSessionService';
+import CreateSessionService from '../modules/users/services/CreateSessionService';
 
-import AppError from '../errors/AppError';
+import AppError from '../shared/errors/AppError';
 
 const sessionsRouter = Router();
 
