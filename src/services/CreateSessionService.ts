@@ -2,6 +2,8 @@ import { getRepository } from 'typeorm';
 import { compare } from 'bcryptjs';
 import { sign } from 'jsonwebtoken';
 
+import AppError from '../errors/AppError';
+
 import authConfig from '../config/auth';
 
 import User from '../models/User';
@@ -23,14 +25,14 @@ class CreateSessionService {
     });
 
     if (!user) {
-      throw new Error("Password and Email doesn't match!");
+      throw new AppError("Password and Email doesn't match!", 401);
     }
 
     // user.password senha criptografada
     const passwordMatched = await compare(password, user.password);
 
     if (!passwordMatched) {
-      throw new Error("Password and Email doesn't match!");
+      throw new AppError("Password and Email doesn't match!", 401);
     }
 
     const { secret, expiresIn } = authConfig.jwt;

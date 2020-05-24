@@ -2,25 +2,23 @@ import { Router } from 'express';
 
 import CreateSessionService from '../services/CreateSessionService';
 
+import AppError from '../errors/AppError';
+
 const sessionsRouter = Router();
 
 sessionsRouter.post('/', async (req, res) => {
-  try {
-    const { email, password } = req.body;
+  const { email, password } = req.body;
 
-    const autheticateUser = new CreateSessionService();
+  const autheticateUser = new CreateSessionService();
 
-    const { user, token } = await autheticateUser.execute({
-      email,
-      password,
-    });
+  const { user, token } = await autheticateUser.execute({
+    email,
+    password,
+  });
 
-    delete user.password;
+  delete user.password;
 
-    return res.send({ user, token });
-  } catch (error) {
-    return res.status(400).json({ error: error.message });
-  }
+  return res.send({ user, token });
 });
 
 export default sessionsRouter;
