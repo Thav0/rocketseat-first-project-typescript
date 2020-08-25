@@ -7,6 +7,7 @@ import uploadConfig from '@config/upload';
 import AppError from '@shared/errors/AppError';
 
 import '@shared/infra/typeorm';
+import '@shared/container';
 
 const app = express();
 app.use(cors());
@@ -21,8 +22,6 @@ app.use((err: Error, req: Request, res: Response, _: NextFunction) => {
       message: err.message,
     });
   }
-
-  console.error(err);
 
   return res.status(500).json({
     status: 'error',

@@ -1,28 +1,31 @@
-import { getRepository } from 'typeorm';
 import { compare } from 'bcryptjs';
 import { sign } from 'jsonwebtoken';
+import { injectable, inject } from 'tsyringe';
 
 import AppError from '@shared/errors/AppError';
 
 import authConfig from '@config/auth';
 
 import User from '@modules/users/infra/typeorm/entities/User';
+import IUserRepository from '@modules/users/repositories/IUserRepository';
 
-interface Request {
+interface IRequest {
   email: string;
   password: string;
 }
 
+@injectable()
 class CreateSessionService {
+  constructor(
+    @inject('UserRepository')
+    private usersRepository: IUserRepository,
+  ) {}
+
   public async execute({
     email,
     password,
-  }: Request): Promise<{ user: User; token: string }> {
-    const usersRepository = getRepository(User);
-
-    const user = await usersRepository.findOne({
-      where: { email },
-    });
+  }: IRequest): Promise<{ user: User; token: string }> {
+    const user = await this.usersRepository.findByEmail(email);
 
     if (!user) {
       throw new AppError("Password and Email doesn't match!", 401);
