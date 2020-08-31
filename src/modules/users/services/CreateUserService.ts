@@ -1,5 +1,4 @@
 import 'reflect-metadata';
-import { hash } from 'bcryptjs';
 import { injectable, inject } from 'tsyringe';
 import AppError from '@shared/errors/AppError';
 import User from '@modules/users/infra/typeorm/entities/User';
