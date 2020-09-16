@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { container } from 'tsyringe';
 import CreateSessionService from '@modules/users/services/CreateSessionService';
+import AppError from '@shared/errors/AppError';
 
 export default class SessionsController {
   public async create(request: Request, response: Response): Promise<Response> {
@@ -8,12 +9,16 @@ export default class SessionsController {
 
     const autheticateUser = container.resolve(CreateSessionService);
 
-    const { user, token } = await autheticateUser.execute({
-      email,
-      password,
-    });
+    try {
+      const { user, token } = await autheticateUser.execute({
+        email,
+        password,
+      });
 
-    delete user.password;
+      delete user.password;
+    } catch (error) {
+      throw new AppError(error.message);
+    }
 
     return response.send({ user, token });
   }
