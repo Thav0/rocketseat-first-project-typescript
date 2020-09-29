@@ -8,8 +8,6 @@ const providersController = new ProvidersController();
 
 providersRouter.use(ensureAuthenticated);
 
-providersRouter.get('/', async (req, res) => {
-  return providersController.index(req, res);
-});
+providersRouter.get('/', providersController.index);
 
 export default providersRouter;
