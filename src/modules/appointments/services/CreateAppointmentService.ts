@@ -1,26 +1,21 @@
-import 'reflect-metadata';
-import { format, getHours, isBefore, startOfHour } from 'date-fns';
+import { startOfHour, isBefore, getHours, format } from 'date-fns';
 import { injectable, inject } from 'tsyringe';
-import Appointment from '@modules/appointments/infra/typeorm/entities/Appoiment';
 
 import AppError from '@shared/errors/AppError';
 
-/**
- * Dependency Inversion
- */
-
-import IAppointmentsRepository from '@modules/appointments/repositories/IAppointmentsRepository';
-import INotificationsRepository from '@modules/notifications/repositories/INotificationsRepository';
 import ICacheProvider from '@shared/container/providers/CacheProvider/models/ICacheProvider';
+import INotificationsRepository from '@modules/notifications/repositories/INotificationsRepository';
+import Appointment from '../infra/typeorm/entities/Appointment';
+import IAppointmentsRepository from '../repositories/IAppointmentsRepository';
 
 interface IRequest {
-  date: Date;
   provider_id: string;
   user_id: string;
+  date: Date;
 }
 
 @injectable()
-class CreateAppointmentServices {
+class CreateAppointmentService {
   constructor(
     @inject('AppointmentsRepository')
     private appointmentsRepository: IAppointmentsRepository,
@@ -37,23 +32,25 @@ class CreateAppointmentServices {
     provider_id,
     user_id,
   }: IRequest): Promise<Appointment> {
-    // regra de negocio
     const appointmentDate = startOfHour(date);
 
-    // Se a data do agendamento for inferior a agora apresentar erro
-    if (isBefore(appointmentDate, Date.now()))
-      throw new AppError("You can't create an appointment on a past date");
+    if (isBefore(appointmentDate, Date.now())) {
+      throw new AppError("You can't create an appointemnt on a past date.");
+    }
 
-    if (user_id === provider_id)
-      throw new AppError("You can't create an appointment with yourself");
+    if (user_id === provider_id) {
+      throw new AppError("You can't create an appointment with yourself.");
+    }
 
-    if (getHours(appointmentDate) < 8 || getHours(appointmentDate) > 17)
+    if (getHours(appointmentDate) < 8 || getHours(appointmentDate) > 17) {
       throw new AppError(
-        'You can only create apoointments between 8am and 5pm',
+        'You can only create appointments between 8am and 5pm',
       );
+    }
 
     const findAppointmentInSameDate = await this.appointmentsRepository.findByDate(
       appointmentDate,
+      provider_id,
     );
 
     if (findAppointmentInSameDate) {
@@ -84,4 +81,4 @@ class CreateAppointmentServices {
   }
 }
 
-export default CreateAppointmentServices;
+export default CreateAppointmentService;

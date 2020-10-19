@@ -1,16 +1,16 @@
 import fs from 'fs';
 import path from 'path';
 import mime from 'mime';
-import uploadConfig from '@config/upload';
 import aws, { S3 } from 'aws-sdk';
+import uploadConfig from '@config/upload';
 import IStorageProvider from '../models/IStorageProvider';
 
-class S3StorageProvider implements IStorageProvider {
+class DiskStorageProvider implements IStorageProvider {
   private client: S3;
 
   constructor() {
     this.client = new aws.S3({
-      region: 'us-east-2',
+      region: 'us-east-1',
     });
   }
 
@@ -41,16 +41,13 @@ class S3StorageProvider implements IStorageProvider {
   }
 
   public async deleteFile(file: string): Promise<void> {
-    const filePath = path.resolve(uploadConfig.uploadsFolder, file);
-
-    try {
-      await fs.promises.stat(filePath);
-    } catch {
-      return;
-    }
-
-    await fs.promises.unlink(filePath);
+    await this.client
+      .deleteObject({
+        Bucket: uploadConfig.config.aws.bucket,
+        Key: file,
+      })
+      .promise();
   }
 }
 
-export default S3StorageProvider;
+export default DiskStorageProvider;

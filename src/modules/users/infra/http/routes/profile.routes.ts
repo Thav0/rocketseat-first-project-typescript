@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { celebrate, Joi, Segments } from 'celebrate';
-import ensureAuthenticated from '@shared/infra/typeorm/migrations/middlewares/ensureAuthenticated';
+import ensureAuthenticated from '@modules/users/infra/http/middlewares/ensureAuthenticated';
 
 import ProfileController from '../controllers/ProfileController';
 

@@ -1,5 +1,5 @@
 import { getRepository, Raw, Repository } from 'typeorm';
-import Appointment from '@modules/appointments/infra/typeorm/entities/Appoiment';
+import Appointment from '@modules/appointments/infra/typeorm/entities/Appointment';
 import IAppointmentsRepository from '@modules/appointments/repositories/IAppointmentsRepository';
 import ICreateAppointmentDTO from '@modules/appointments/dtos/ICreateAppointmentDTO';
 import IFindAllInMonthFromProviderDTO from '@modules/appointments/dtos/IFindAllInMonthFromProviderDTO';
@@ -12,11 +12,16 @@ class AppointmentsRepository implements IAppointmentsRepository {
     this.ormRepository = getRepository(Appointment);
   }
 
-  public async findByDate(date: Date): Promise<Appointment | undefined> {
+  public async findByDate(
+    date: Date,
+    provider_id: string,
+  ): Promise<Appointment | undefined> {
     const findAppointment = await this.ormRepository.findOne({
       where: {
         date,
+        provider_id,
       },
+      relations: ['user'],
     });
 
     return findAppointment || undefined;

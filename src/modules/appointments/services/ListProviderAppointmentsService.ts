@@ -1,7 +1,7 @@
 import ICacheProvider from '@shared/container/providers/CacheProvider/models/ICacheProvider';
 import 'reflect-metadata';
 import { injectable, inject } from 'tsyringe';
-import Appointment from '../infra/typeorm/entities/Appoiment';
+import Appointment from '../infra/typeorm/entities/Appointment';
 
 import IAppointmentsRepository from '../repositories/IAppointmentsRepository';
 
