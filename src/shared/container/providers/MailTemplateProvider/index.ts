@@ -1,6 +1,8 @@
 import { container } from 'tsyringe';
-import HandlebarsMailTemplateProvider from './implementations/HandlebarsMailTemplateProvider';
+
 import IMailTemplateProvider from './models/IMailTemplateProvider';
+
+import HandlebarsMailTemplateProvider from './implementations/HandlebarsMailTemplateProvider';
 
 const providers = {
   handlebars: HandlebarsMailTemplateProvider,

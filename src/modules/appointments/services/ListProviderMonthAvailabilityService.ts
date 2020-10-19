@@ -1,6 +1,5 @@
-import { getDate, getDaysInMonth, isAfter } from 'date-fns';
-import 'reflect-metadata';
 import { injectable, inject } from 'tsyringe';
+import { getDaysInMonth, getDate, isAfter } from 'date-fns';
 
 import IAppointmentsRepository from '../repositories/IAppointmentsRepository';
 
@@ -52,11 +51,9 @@ class ListProviderMonthAvailabilityService {
       return {
         day,
         available:
-          isAfter(new Date(), compareDate) && appointmentsInDay.length < 10,
+          isAfter(compareDate, new Date()) && appointmentsInDay.length < 10,
       };
     });
-
-    // console.log(availability);
 
     return availability;
   }

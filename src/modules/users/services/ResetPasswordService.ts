@@ -1,9 +1,9 @@
-import 'reflect-metadata';
 import { injectable, inject } from 'tsyringe';
-import IUserRepository from '@modules/users/repositories/IUserRepository';
+import { isAfter, addHours } from 'date-fns';
+
 import AppError from '@shared/errors/AppError';
-import { differenceInHours } from 'date-fns';
-import IUserTokensRepository from '../repositories/IUsersTokensRepository';
+import IUsersRepository from '../repositories/IUsersRepository';
+import IUserTokensRepository from '../repositories/IUserTokensRepository';
 import IHashProvider from '../providers/HashProvider/models/IHashProvider';
 
 interface IRequest {
@@ -14,36 +14,37 @@ interface IRequest {
 @injectable()
 class ResetPasswordService {
   constructor(
-    @inject('UserRepository')
-    private usersRepository: IUserRepository,
+    @inject('UsersRepository')
+    private usersRepository: IUsersRepository,
 
     @inject('UserTokensRepository')
     private userTokensRepository: IUserTokensRepository,
 
     @inject('HashProvider')
-    private hasProvider: IHashProvider,
+    private hashProvider: IHashProvider,
   ) {}
 
   public async execute({ token, password }: IRequest): Promise<void> {
     const userToken = await this.userTokensRepository.findByToken(token);
 
     if (!userToken) {
-      throw new AppError('User token not found');
+      throw new AppError('User token does not exists');
     }
 
-    const user = await this.usersRepository.findByID(userToken.user_id);
+    const user = await this.usersRepository.findById(userToken.user_id);
 
     if (!user) {
-      throw new AppError('User not found');
+      throw new AppError('User does not exists');
     }
 
     const tokenCreatedAt = userToken.created_at;
+    const compareDate = addHours(tokenCreatedAt, 2);
 
-    if (differenceInHours(Date.now(), tokenCreatedAt) > 2) {
-      throw new AppError('Token expired');
+    if (isAfter(Date.now(), compareDate)) {
+      throw new AppError('Token expired.');
     }
 
-    user.password = await this.hasProvider.generateHash(password);
+    user.password = await this.hashProvider.generateHash(password);
 
     await this.usersRepository.save(user);
   }

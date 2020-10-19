@@ -1,9 +1,11 @@
-import INotificationsRepository from '@modules/notifications/repositories/INotificationsRepository';
-import ICreateNotificationDTO from '@modules/notifications/dtos/ICreateNotificationDTO';
-import Notification from '@modules/notifications/infra/typeorm/schemas/Notification';
 import { ObjectID } from 'mongodb';
 
-class FakeNotificationsRepository implements INotificationsRepository {
+import INotificationsRepository from '@modules/notifications/repositories/INotificationsRepository';
+import ICreateNotificationDTO from '@modules/notifications/dtos/ICreateNotificationDTO';
+
+import Notification from '../../infra/typeorm/schemas/Notification';
+
+class NotificationsRepository implements INotificationsRepository {
   private notifications: Notification[] = [];
 
   public async create({
@@ -20,4 +22,4 @@ class FakeNotificationsRepository implements INotificationsRepository {
   }
 }
 
-export default FakeNotificationsRepository;
+export default NotificationsRepository;

@@ -1,5 +1,6 @@
 import { Router } from 'express';
-import { celebrate, Joi, Segments } from 'celebrate';
+import { celebrate, Segments, Joi } from 'celebrate';
+
 import ForgotPasswordController from '../controllers/ForgotPasswordController';
 import ResetPasswordController from '../controllers/ResetPasswordController';
 
@@ -16,6 +17,7 @@ passwordRouter.post(
   }),
   forgotPasswordController.create,
 );
+
 passwordRouter.post(
   '/reset',
   celebrate({

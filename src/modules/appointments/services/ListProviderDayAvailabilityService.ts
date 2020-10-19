@@ -1,14 +1,13 @@
-import { getDate, getDaysInMonth, getHours, isAfter } from 'date-fns';
-import 'reflect-metadata';
 import { injectable, inject } from 'tsyringe';
+import { getHours, isAfter } from 'date-fns';
 
 import IAppointmentsRepository from '../repositories/IAppointmentsRepository';
 
 interface IRequest {
   provider_id: string;
+  day: number;
   month: number;
   year: number;
-  day: number;
 }
 
 type IResponse = Array<{
@@ -41,24 +40,18 @@ class ListProviderDayAvailabilityService {
     const hourStart = 8;
 
     const eachHourArray = Array.from(
-      {
-        length: 10,
-      },
+      { length: 10 },
       (_, index) => index + hourStart,
     );
+
+    const currentDate = new Date(Date.now());
 
     const availability = eachHourArray.map(hour => {
       const hasAppointmentInHour = appointments.find(
         appointment => getHours(appointment.date) === hour,
       );
 
-      const currentDate = new Date(Date.now());
       const compareDate = new Date(year, month - 1, day, hour);
-
-      // 2020-10-20 08:00:00
-      // 2020-10-20 09:00:00
-      // 2020-10-20 10:00:00
-      // 2020-10-20 11:00:00
 
       return {
         hour,

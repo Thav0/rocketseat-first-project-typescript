@@ -1,4 +1,3 @@
-import fs from 'fs';
 import IStorageProvider from '../models/IStorageProvider';
 
 class FakeStorageProvider implements IStorageProvider {

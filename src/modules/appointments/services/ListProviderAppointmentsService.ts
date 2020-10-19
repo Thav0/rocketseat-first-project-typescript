@@ -1,15 +1,15 @@
-import ICacheProvider from '@shared/container/providers/CacheProvider/models/ICacheProvider';
-import 'reflect-metadata';
 import { injectable, inject } from 'tsyringe';
-import Appointment from '../infra/typeorm/entities/Appointment';
 
+import ICacheProvider from '@shared/container/providers/CacheProvider/models/ICacheProvider';
+import { classToClass } from 'class-transformer';
+import Appointment from '../infra/typeorm/entities/Appointment';
 import IAppointmentsRepository from '../repositories/IAppointmentsRepository';
 
 interface IRequest {
   provider_id: string;
+  day: number;
   month: number;
   year: number;
-  day: number;
 }
 
 @injectable()
@@ -28,10 +28,10 @@ class ListProviderAppointmentsService {
     month,
     day,
   }: IRequest): Promise<Appointment[]> {
-    const cachedKey = `provider-appointments:${provider_id}-${year}-${month}-${day}`;
+    const cacheKey = `provider-appointments:${provider_id}:${year}-${month}-${day}`;
 
     let appointments = await this.cacheProvider.recover<Appointment[]>(
-      cachedKey,
+      cacheKey,
     );
 
     if (!appointments) {
@@ -44,9 +44,7 @@ class ListProviderAppointmentsService {
         },
       );
 
-      console.log('buscou');
-
-      await this.cacheProvider.save(cachedKey, appointments);
+      await this.cacheProvider.save(cacheKey, classToClass(appointments));
     }
 
     return appointments;

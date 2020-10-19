@@ -1,8 +1,9 @@
 import { Router } from 'express';
-import { celebrate, Joi, Segments } from 'celebrate';
-import ensureAuthenticated from '@modules/users/infra/http/middlewares/ensureAuthenticated';
+import { celebrate, Segments, Joi } from 'celebrate';
 
 import ProfileController from '../controllers/ProfileController';
+
+import ensureAuthenticated from '../middlewares/ensureAuthenticated';
 
 const profileRouter = Router();
 const profileController = new ProfileController();
